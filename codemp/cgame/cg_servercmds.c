@@ -248,6 +248,7 @@ void CG_ParseServerinfo( void ) {
 	if (gamename) {
 		if (!Q_stricmpn(gamename, "JA+", 3)
 			|| !Q_stricmpn(gamename, "^4U^3A^5Galaxy", 14)
+			|| !Q_stricmpn(gamename, "^5X^2Jedi ^5Academy", 19)
 			|| !Q_stricmpn(gamename, "AbyssMod", 8)) {	//uag :s - yes its fatz
 			cgs.serverMod = SVMOD_JAPLUS;
 			cgs.cinfo = atoi(Info_ValueForKey(info, "jp_cinfo"));//[JAPRO - Clientside - All - Add jp_cinfo variable to get cinfo from japlus servers]
