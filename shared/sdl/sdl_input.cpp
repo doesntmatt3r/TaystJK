@@ -665,6 +665,9 @@ uint8_t ConvertUTF32ToExpectedCharset( uint32_t utf32 )
 	switch ( utf32 )
 	{
 		// Cyrillic characters - mapped to Windows-1251 encoding
+		case 0x0404: return 170;
+		case 0x0406: return 178;
+		case 0x0407: return 175;
 		case 0x0410: return 192;
 		case 0x0411: return 193;
 		case 0x0412: return 194;
@@ -729,6 +732,11 @@ uint8_t ConvertUTF32ToExpectedCharset( uint32_t utf32 )
 		case 0x044D: return 253;
 		case 0x044E: return 254;
 		case 0x044F: return 255;
+		case 0x0454: return 186;
+		case 0x0456: return 179;
+		case 0x0457: return 191;
+		case 0x0490: return 165;
+		case 0x0491: return 180;
 
 		// Eastern european characters - polish, czech, etc use Windows-1250 encoding
 		case 0x0160: return 138;
