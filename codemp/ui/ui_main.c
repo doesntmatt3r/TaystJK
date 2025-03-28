@@ -643,8 +643,7 @@ void UI_UpdateCurrentServerInfo(void) { //parses server info to contextually hid
 	trap->GetConfigString(CS_SERVERINFO, info, sizeof(info));
 
 	value = Info_ValueForKey(info, "gamename");
-	if (!Q_stricmpn(value, "JA+ Mod", 7) || !Q_stricmpn(value, "^4U^3A^5Galaxy", 14) || !Q_stricmpn(value, "AbyssMod", 8) ||
-		!Q_stricmpn(value, "^5X^2Jedi ^5Academy", 19))
+	if (!Q_stricmpn(value, "JA+ Mod", 7) || !Q_stricmpn(value, "AbyssMod", 8))
 	{
 		trap->Cvar_Set("ui_allowSaberSwitch", "1");
 	}
