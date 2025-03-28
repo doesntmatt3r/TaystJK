@@ -10,11 +10,12 @@ extern "C" {
 #define	MAKERGBA( v, r, g, b, a ) v[0]=r;v[1]=g;v[2]=b;v[3]=a
 
 #define Q_COLOR_ESCAPE	'^'
-#define Q_COLOR_BITS 0xF // was 7
+#define Q_COLOR_BITS 0x3F // was 7
 
 // you MUST have the last bit on here about colour strings being less than 7 or taiwanese strings register as colour!!!!
-#define Q_IsColorString(p)	( p && *(p) == Q_COLOR_ESCAPE && *((p)+1) && *((p)+1) != Q_COLOR_ESCAPE && *((p)+1) <= '9' && *((p)+1) >= '0' )
-#define Q_IsColorStringExt(p)	((p) && *(p) == Q_COLOR_ESCAPE && *((p)+1) && *((p)+1) >= '0' && *((p)+1) <= '9') // ^[0-9]
+#define Q_IsColorCode(p)        ( (p) <= '9' && (p) >= '0' || (p) <= 'Z' && (p) >= 'A' )
+#define Q_IsColorString(p)      ( p && *(p) == Q_COLOR_ESCAPE && *((p)+1) && *((p)+1) != Q_COLOR_ESCAPE && Q_IsColorCode(*((p)+1)) )
+#define Q_IsColorStringExt(p)   ( (p) && *(p) == Q_COLOR_ESCAPE && *((p)+1) && Q_IsColorCode(*((p)+1)) ) // ^[0-9A-Z]
 
 #define COLOR_BLACK		'0'
 #define COLOR_RED		'1'
