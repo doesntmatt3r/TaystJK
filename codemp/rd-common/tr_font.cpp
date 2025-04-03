@@ -1440,7 +1440,7 @@ float RE_Font_StrLenPixelsNew( const char *psText, const int iFontHandle, const 
 		psText += iAdvanceCount;
 
 		if ( uiLetter == '^' ) {
-			if ( *psText >= '0' && *psText <= '9' ) {
+			if ( Q_IsColorCode(*psText) ) {
 				uiLetter = AnyLanguage_ReadCharFromString( psText, &iAdvanceCount, NULL );
 				psText += iAdvanceCount;
 				continue;
@@ -1499,8 +1499,7 @@ int RE_Font_StrLenChars(const char *psText)
 		switch (uiLetter)
 		{
 			case '^':
-				if (*psText >= '0' &&
-					*psText <= '9')
+				if ( Q_IsColorCode(*psText) )
 				{
 					psText++;
 				}
