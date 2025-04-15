@@ -1289,6 +1289,7 @@ void CG_PluginDisable_f( void ) {
 
 	if ( trap->Cmd_Argc() == 1 ) {
 		int i = 0;
+        int n = 0;
         dynTable_init();
         dynTable_addHeader("num", ALIGN_LEFT);
         dynTable_addHeader("Enabled", ALIGN_CENTER);
@@ -1300,7 +1301,7 @@ void CG_PluginDisable_f( void ) {
 			if (cgs.serverMod == SVMOD_JAPRO && !japroPluginDisables[i])
 				continue;
 
-            dynTable_addCell(va("%d", i));
+            dynTable_addCell(va("%d", n++));
             dynTable_addCell(va("%c", cp_pluginDisable.integer & (1 << i) ? 'X' : ' '));
             dynTable_addCell(va("%s", pluginDisables[i].string));
         }
