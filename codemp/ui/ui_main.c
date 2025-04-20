@@ -7082,6 +7082,71 @@ const char *saberStaffHiltInfo [MAX_SABER_HILTS];
 qboolean UI_SaberProperNameForSaber( const char *saberName, char *saberProperName );
 void WP_SaberGetHiltInfo( const char *singleHilts[MAX_SABER_HILTS], const char *staffHilts[MAX_SABER_HILTS] );
 
+void UI_UpdateCharacterItem( itemDef_t* item, const char *model, int *runTimeLength )
+{
+    char modelPath[MAX_QPATH];
+    char modelChar[MAX_QPATH];
+    char modelSkin[MAX_QPATH];
+    char modelSkinPath[MAX_QPATH];
+    char *slash;
+    float colors[3];
+
+    if ( !item )
+    {
+        return;
+    }
+
+    // copy model string
+    Q_strncpyz( modelChar, model, sizeof( modelChar ) );
+
+    // check if model skin is encoded into model
+    slash = strchr( modelChar, '/' );
+    if ( slash )
+    {
+        *slash = '\0';
+        Q_strncpyz( modelSkin, slash + 1, sizeof( modelSkin ) );
+    }
+    else
+    {
+        Q_strncpyz( modelSkin, "default", sizeof( modelSkin ) );
+
+        BG_ValidateSkinForTeam( modelChar, modelSkin, uiSkinColor, colors );
+    }
+
+    Com_sprintf( modelPath, sizeof( modelPath ), "models/players/%s/model.glm", modelChar );
+    ItemParse_asset_model_go( item, modelPath, runTimeLength );
+
+    // check if model skin consists of multiple parts
+    if ( strchr( modelSkin, '|' ) )
+    {
+        // set appropriate character color
+        switch ( uiSkinColor )
+        {
+            case TEAM_RED:
+                trap->Cvar_Set( "ui_char_color_red",   "255" );
+                trap->Cvar_Set( "ui_char_color_green", "0" );
+                trap->Cvar_Set( "ui_char_color_blue",  "0" );
+                break;
+            case TEAM_BLUE:
+                trap->Cvar_Set( "ui_char_color_red",   "0" );
+                trap->Cvar_Set( "ui_char_color_green", "0" );
+                trap->Cvar_Set( "ui_char_color_blue",  "255" );
+        }
+
+        trap->Cvar_Update( &ui_char_color_red );
+        trap->Cvar_Update( &ui_char_color_green );
+        trap->Cvar_Update( &ui_char_color_blue );
+
+        Com_sprintf( modelSkinPath, sizeof( modelPath ), "models/players/%s/|%s", modelChar, modelSkin );
+    }
+    else
+    {
+        Com_sprintf( modelSkinPath, sizeof( modelPath ), "models/players/%s/model_%s.skin", modelChar, modelSkin );
+    }
+
+    ItemParse_model_g2skin_go(item, modelSkinPath);
+}
+
 static void UI_UpdateCharacter( qboolean changedModel )
 {
 	menuDef_t *menu;
@@ -7117,6 +7182,32 @@ static void UI_UpdateCharacter( qboolean changedModel )
 		UI_FeederSelection(FEEDER_COLORCHOICES, 0, item);
 	}
 	UI_UpdateCharacterSkin();
+}
+
+static void UI_UpdateCharacter2( void )
+{
+    menuDef_t* menu;
+    itemDef_t* item;
+    char modelPath[MAX_QPATH];
+    int	animRunLength;
+
+    menu = Menu_GetFocused();	// Get current menu
+
+    if ( !menu )
+    {
+        return;
+    }
+
+    item = ( itemDef_t* ) Menu_FindItemByName( menu, "character" );
+
+    if ( !item )
+    {
+        Com_Error( ERR_FATAL, "UI_UpdateCharacter: Could not find item (character) in menu (%s)", menu->window.name );
+    }
+
+    ItemParse_model_g2anim_go( item, ui_char_anim.string );
+
+    UI_UpdateCharacterItem( item, UI_Cvar_VariableString( "model" ), &animRunLength );
 }
 
 /*
@@ -8054,8 +8145,6 @@ static void UI_RunMenuScript(char **args)
 			modelDef_t *modelPtr;
 			int	animRunLength;
 
-			UI_GetCharacterCvars();
-
 			uiInfo.movesTitleIndex = 0;
 
 			menu = Menus_FindByName("rulesMenu_moves");
@@ -8067,17 +8156,13 @@ static void UI_RunMenuScript(char **args)
 				{
 					modelPtr = item->typeData.model;
 					if (modelPtr)
-					{
-						char modelPath[MAX_QPATH];
-
-						uiInfo.movesBaseAnim = datapadMoveTitleBaseAnims[uiInfo.movesTitleIndex];
+                    {
+                        uiInfo.movesBaseAnim = datapadMoveTitleBaseAnims[uiInfo.movesTitleIndex];
 						ItemParse_model_g2anim_go( item,  uiInfo.movesBaseAnim );
 						uiInfo.moveAnimTime = 0 ;
+	
+                        UI_UpdateCharacterItem( item, UI_Cvar_VariableString( "model" ), &animRunLength );
 
-						Com_sprintf( modelPath, sizeof( modelPath ), "models/players/%s/model.glm", UI_Cvar_VariableString ( "ui_char_model" ) );
-						ItemParse_asset_model_go( item, modelPath, &animRunLength);
-
-						UI_UpdateCharacterSkin();
 						UI_SaberAttachToChar( item );
 					}
 				}
@@ -8091,6 +8176,10 @@ static void UI_RunMenuScript(char **args)
 		{
 			UI_UpdateCharacter( qtrue );
 		}
+        else if (Q_stricmp(name, "characterchanged2") == 0)
+        {
+            UI_UpdateCharacter2();
+        }
 		else if (Q_stricmp(name, "updatecharcvars") == 0
 			|| (Q_stricmp(name, "updatecharmodel") == 0) )
 		{
@@ -10515,15 +10604,12 @@ qboolean UI_FeederSelection(float feederFloat, int index, itemDef_t *item)
 			{
 				modelPtr = item->typeData.model;
 				if (modelPtr)
-				{
-					char modelPath[MAX_QPATH];
-					int animRunLength;
+                {
+                    int animRunLength;
 
 					ItemParse_model_g2anim_go( item,  datapadMoveData[uiInfo.movesTitleIndex][index].anim );
 
-					Com_sprintf( modelPath, sizeof( modelPath ), "models/players/%s/model.glm", UI_Cvar_VariableString ( "ui_char_model" ) );
-					ItemParse_asset_model_go( item, modelPath, &animRunLength );
-					UI_UpdateCharacterSkin();
+                    UI_UpdateCharacterItem( item, UI_Cvar_VariableString( "model" ), &animRunLength );
 
 					uiInfo.moveAnimTime = uiInfo.uiDC.realTime + animRunLength;
 
@@ -10598,16 +10684,12 @@ qboolean UI_FeederSelection(float feederFloat, int index, itemDef_t *item)
 				if (modelPtr)
 				{
 					char modelPath[MAX_QPATH];
-					int	animRunLength;
+                    int	animRunLength;
 
 					uiInfo.movesBaseAnim = datapadMoveTitleBaseAnims[uiInfo.movesTitleIndex];
 					ItemParse_model_g2anim_go( item,  uiInfo.movesBaseAnim );
 
-					Com_sprintf( modelPath, sizeof( modelPath ), "models/players/%s/model.glm", UI_Cvar_VariableString ( "ui_char_model" ) );
-					ItemParse_asset_model_go( item, modelPath, &animRunLength );
-
-					UI_UpdateCharacterSkin();
-
+                    UI_UpdateCharacterItem( item, UI_Cvar_VariableString( "model" ), &animRunLength );
 				}
 			}
 		}
