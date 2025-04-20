@@ -20,13 +20,14 @@
 		onOpen  
 		{ 
 			uiScript  				"getcharcvars"
-			uiScript  				"character"
+			uiScript  				"characterchanged"
 			uiScript				updateForceStatus
 			hide					highlights
 		}
 		onClose 
 		{ 
 			uiScript				updateForceStatus 
+			uiScript  				"characterchanged"
 			hide					highlights
 		}
 
