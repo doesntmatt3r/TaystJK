@@ -1080,8 +1080,13 @@ void UI_SetActiveMenu( uiMenuCommand_t menu ) {
 			Menus_CloseAll();
 			Menus_ActivateByName("ingame_siegeclass");
 			return;
-		}
-	}
+        case UIMENU_WHISPER:
+            trap->Key_SetCatcher( KEYCATCH_UI );
+            Menus_CloseAll();
+            Menus_ActivateByName("whisper");
+            return;
+        }
+    }
 }
 
 void UI_DrawCenteredPic(qhandle_t image, int w, int h) {
@@ -8757,6 +8762,10 @@ static void UI_RunMenuScript(char **args)
 		{
 			UI_ClampMaxPlayers();
 		}
+        else if (Q_stricmp(name, "whisper") == 0)
+        {
+            trap->Cmd_ExecuteText( EXEC_APPEND, va("messagemode5 \"%i\"\n", uiInfo.playerIndexes[uiInfo.playerIndex]) );
+        }
 		else if ( Q_stricmp( name, "LaunchSP" ) == 0 )
 		{
 			// TODO for MAC_PORT

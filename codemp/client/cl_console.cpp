@@ -170,6 +170,37 @@ void Con_MessageMode4_f (void)
 
 /*
 ================
+Con_MessageMode5_f
+================
+*/
+void Con_MessageMode5_f (void)
+{	//attacker
+	if (!cls.cgameStarted)
+	{
+		assert(!"null cgvm");
+		return;
+	}
+
+    if (Cmd_Argc() != 2)
+    {
+        Com_Printf("You need to specify the player ID\n");
+        return;
+    }
+
+	chat_playerNum = atoi( Cmd_Argv( 1 ) );
+	if ( chat_playerNum < 0 || chat_playerNum >= MAX_CLIENTS ) {
+		chat_playerNum = -1;
+        Com_Printf("Invalid player ID\n");
+		return;
+	}
+	chat_team = qfalse;
+	Field_Clear( &chatField );
+	chatField.widthInChars = SCREEN_WIDTH / (BIGCHAR_WIDTH * cls.widthRatioCoef) - (24 * cls.widthRatioCoef);
+	Key_SetCatcher( Key_GetCatcher( ) ^ KEYCATCH_MESSAGE );
+}
+
+/*
+================
 Con_Clear_f
 ================
 */
@@ -678,6 +709,7 @@ void Con_Init (void) {
 	Cmd_AddCommand( "messagemode2", Con_MessageMode2_f, "Team Chat" );
 	Cmd_AddCommand( "messagemode3", Con_MessageMode3_f, "Private Chat with Target Player" );
 	Cmd_AddCommand( "messagemode4", Con_MessageMode4_f, "Private Chat with Last Attacker" );
+    Cmd_AddCommand( "messagemode5", Con_MessageMode5_f, "Private Chat with Specified Player (by ID)" );
 	Cmd_AddCommand( "clear", Con_Clear_f, "Clear console text" );
 	Cmd_AddCommand( "condump", Con_Dump_f, "Dump console text to file" );
 	Cmd_SetCommandCompletionFunc( "condump", Cmd_CompleteTxtName );
@@ -698,7 +730,8 @@ void Con_Shutdown(void)
 	Cmd_RemoveCommand("messagemode");
 	Cmd_RemoveCommand("messagemode2");
 	Cmd_RemoveCommand("messagemode3");
-	Cmd_RemoveCommand("messagemode4");
+    Cmd_RemoveCommand("messagemode4");
+    Cmd_RemoveCommand("messagemode5");
 	Cmd_RemoveCommand("clear");
 	Cmd_RemoveCommand("condump");
 }
@@ -1016,8 +1049,8 @@ void Con_DrawNotify (void)
 		skip = strlen(chattext) + 1;
 		Field_BigDraw( &chatField, skip * BIGCHAR_WIDTH, v,
 			SCREEN_WIDTH - ( skip + 1 ) * BIGCHAR_WIDTH, qtrue, qtrue );
-
-		v += BIGCHAR_HEIGHT;
+        
+        v += BIGCHAR_HEIGHT;
 	}
 
 }

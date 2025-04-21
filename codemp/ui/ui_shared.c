@@ -4997,6 +4997,7 @@ static const char *g_bindCommands[] = {
 	"messagemode2",
 	"messagemode3",
 	"messagemode4",
+    "messagemode5",
 	"saberAttackCycle",
 	"taunt",
 	"use_bacta",
@@ -5020,7 +5021,8 @@ static const char *g_bindCommands[] = {
 	"weapon 8",
 	"weapon 9",
 	"weapprev",
-	"zoom", //japro stuff below
+    "whisper",
+    "zoom", //japro stuff below
 	"+zoom",
 	"+button12", //grapple on ja+/japro
 	"+button13", //dash on japro
