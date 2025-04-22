@@ -308,6 +308,8 @@ void CG_ParseServerinfo( void ) {
 	Com_sprintf( cgs.mapname, sizeof( cgs.mapname ), "maps/%s.bsp", mapname );
 	Com_sprintf( cgs.rawmapname, sizeof( cgs.rawmapname ), "maps/%s", mapname );
 
+	trap->Cvar_Set ( "ui_gametype", va("%i", cgs.gametype ) );
+
 	trap->Cvar_Set ( "ui_about_gametype", va("%i", cgs.gametype ) );
 	trap->Cvar_Set ( "ui_about_fraglimit", va("%i", cgs.fraglimit ) );
 	trap->Cvar_Set ( "ui_about_duellimit", va("%i", cgs.duel_fraglimit ) );
