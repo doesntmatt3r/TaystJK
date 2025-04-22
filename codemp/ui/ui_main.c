@@ -916,7 +916,7 @@ static void UI_BuildPlayerList() {
 
 		if (info[0]) {
 			Q_strncpyz( uiInfo.playerNames[uiInfo.playerCount], Info_ValueForKey( info, "n" ), MAX_NETNAME );
-			Q_StripColor( uiInfo.playerNames[uiInfo.playerCount] );
+			//Q_StripColor( uiInfo.playerNames[uiInfo.playerCount] );
 			uiInfo.playerIndexes[uiInfo.playerCount] = n;
 			uiInfo.playerCount++;
 			team2 = atoi(Info_ValueForKey(info, "t"));
