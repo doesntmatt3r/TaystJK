@@ -1342,7 +1342,7 @@ gitem_t	*BG_FindItemForHoldable( holdable_t pw );
 
 qboolean	BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const playerState_t *ps );
 
-
+qboolean    BG_ValidateSkinForTeam( const char *modelName, char *skinName, int team, float *colors );
 
 #define SABER_BLOCK_DUR 150		// number of milliseconds a block animation should take.
 
