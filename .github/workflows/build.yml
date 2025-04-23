@@ -91,7 +91,7 @@ jobs:
 
   ubuntu:
     name: Ubuntu ${{ matrix.arch }} ${{ matrix.build_type }} (${{ matrix.portable }})
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -377,27 +377,27 @@ jobs:
       matrix:
         include:
           - artifact_dir: TaystJK-windows-x86-Release-Non-Portable/JediAcademy/
-            artifact_name: TaystJK-windows-x86.zip
+            artifact_name: TaystJK.${{ github.ref }}-windows-x86.zip
             zip: true
 
           - artifact_dir: TaystJK-windows-x86_64-Release-Non-Portable/JediAcademy/
-            artifact_name: TaystJK-windows-x86_64.zip
+            artifact_name: TaystJK.${{ github.ref }}-windows-x86_64.zip
             zip: true
 
           - artifact_dir: TaystJK-linux-x86-Release-Non-Portable
-            artifact_name: TaystJK-linux-x86.tar.gz
+            artifact_name: TaystJK.${{ github.ref }}-linux-x86.tar.gz
             zip: false
 
           - artifact_dir: TaystJK-linux-x86_64-Release-Non-Portable
-            artifact_name: TaystJK-linux-x86_64.tar.gz
+            artifact_name: TaystJK.${{ github.ref }}-linux-x86_64.tar.gz
             zip: false
 
           - artifact_dir: TaystJK-macos-x86_64-Release-Non-Portable
-            artifact_name: TaystJK-macos-x86_64.tar.gz
+            artifact_name: TaystJK.${{ github.ref }}-macos-x86_64.tar.gz
             zip: false
 
           - artifact_dir: TaystJK-macos-arm64-Release-Non-Portable
-            artifact_name: TaystJK-macos-arm64.tar.gz
+            artifact_name: TaystJK.${{ github.ref }}-macos-arm64.tar.gz
             zip: false
 
     steps:
