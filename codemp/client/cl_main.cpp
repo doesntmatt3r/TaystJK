@@ -3238,7 +3238,7 @@ static void CL_ColorName_f(void) {
 	cl_colorStringCount->integer = storebitcount;
 }
 
-#define G2_VERT_SPACE_CLIENT_SIZE 256
+#define G2_VERT_SPACE_CLIENT_SIZE 2048
 
 /*
 ===============
